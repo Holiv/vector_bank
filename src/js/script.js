@@ -146,7 +146,7 @@ btnTransfer.addEventListener('click', function(e) {
   if (ammount > 0 && receiverAccount && currentAccount.ballance >= ammount && receiverAccount?.username !== currentAccount.username) {
     currentAccount.movements.push(-ammount);
     receiverAccount.movements.push(ammount);
-    displayMovements(currentAccount.movements);
+    displayMovements(currentAccount);
     calcDisplaySumaryMovements(currentAccount)
     console.log(currentAccount)
   }
