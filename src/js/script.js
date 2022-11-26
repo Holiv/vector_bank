@@ -5,13 +5,11 @@
 // BANKIST APP
 
 const eurToUSD = 1.1;
-
-// Data
-const account1 = {
-  owner: "Jonas Schmedtmann",
-  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
-  interestRate: 1.2, // %
-  pin: 1111,
+const accountAdmin = {
+  owner: "admin",
+  movements: [0],
+  interestRate: 0, // %
+  pin: 9999,
   createUserName() {
     return (this.username = this.owner
       .toLowerCase()
@@ -19,8 +17,15 @@ const account1 = {
       .map((name) => name[0])
       .join(""));
   },
+}
+accountAdmin.createUserName();
+// Data
+const account1 = {
+  owner: "Jonas Schmedtmann",
+  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+  interestRate: 1.2, // %
+  pin: 1111,
 };
-account1.createUserName();
 
 const account2 = {
   owner: "Jessica Davis",
@@ -45,7 +50,7 @@ const account4 = {
 };
 // account1.createUserName.call(account4)
 
-const accounts = [account1, account2, account3, account4];
+const accounts = [accountAdmin, account1, account2, account3, account4];
 
 // Elements
 const labelWelcome = document.querySelector(".welcome");
@@ -129,12 +134,16 @@ const updateUI = (currentAcc) => {
 let currentAccount;
 btnLogin.addEventListener("click", function (e) {
   e.preventDefault();
-  for (const user of accounts) {
-    user != accounts[0] && accounts[0].createUserName.call(user);
-  }
+
+  //generating the user when loging in
   currentAccount = accounts.find(
-    (account) => account.username === inputLoginUsername.value
+    account => {
+      accounts[0].createUserName.call(account);
+      return account.username === inputLoginUsername.value;
+    }
   );
+
+  //validating the user's pin
   if (Number(inputLoginPin.value) === currentAccount?.pin) {
     //display UI container
     containerApp.style.opacity = "100%";
@@ -143,6 +152,8 @@ btnLogin.addEventListener("click", function (e) {
     labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(" ")[0]}`;
 
     updateUI(currentAccount);
+  } else {
+    console.log('invalid account')
   }
 });
 
@@ -153,20 +164,38 @@ btnTransfer.addEventListener("click", function (e) {
   const receiverAccount = accounts.find(
     (acc) => acc.username === inputTransferTo.value
   );
+  //cleaning the input
+  inputTransferTo.value = inputTransferAmount.value = ""
+  inputTransferAmount.blur();
 
+  //validating the account and the ammout to transfer
   if (
     ammount > 0 &&
     receiverAccount &&
     currentAccount.ballance >= ammount &&
     receiverAccount?.username !== currentAccount.username
   ) {
+
+    //transfer transaction
     currentAccount.movements.push(-ammount);
     receiverAccount.movements.push(ammount);
-    displayMovements(currentAccount);
-    calcDisplaySumaryMovements(currentAccount);
-    console.log(currentAccount);
+
+    //updating UI after transfer
+    updateUI(currentAccount);
   }
 });
+
+//close account function
+btnClose.addEventListener('click', function(e) {
+  e.preventDefault();
+
+  if (inputCloseUsername.value === currentAccount.username && Number(inputClosePin.value) === currentAccount.pin) {
+    const index = accounts.findIndex(acc => acc.username === currentAccount.username);
+    accounts.splice(index, 1);
+    console.log(accounts);
+  }
+  containerApp.style.opacity = "0";
+})
 
 // btnTransfer.addEventListener('click', function(e) {
 //   e.preventDefault();
