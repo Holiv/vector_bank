@@ -97,10 +97,12 @@ const inputClosePin = document.querySelector(".form__input--pin");
 /////////////////////////////////////////////////
 // LECTURES
 
-const displayMovements = function (acc) {
+const displayMovements = function (movements, sort = false) {
   containerMovements.innerHTML = "";
-  console.log(acc);
-  acc.movements.forEach(function (mov, i) {
+  
+  const movem = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movem.forEach(function (mov, i) {
     const type = mov > 0 ? `deposit` : `withdrawal`;
 
     const html = `
@@ -140,7 +142,7 @@ const calcDisplaySumaryMovements = (acc) => {
 //updating interface
 const updateUI = (currentAcc) => {
   //display movements
-  displayMovements(currentAcc);
+  displayMovements(currentAcc.movements);
   //display balance and summary
   calcDisplaySumaryMovements(currentAcc);
 };
@@ -231,7 +233,12 @@ btnClose.addEventListener('click', function(e) {
 })
 
 //sort function
-
+let sorted = false;
+btnSort.addEventListener('click', function(e) {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
+})
 
 
 // ----- FEATURES TO IMPLEMENT
