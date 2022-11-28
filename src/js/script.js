@@ -160,8 +160,10 @@ btnLogin.addEventListener("click", function (e) {
     }
   );
 
+  currentAccount2 = JSON.parse(localStorage.getItem(inputLoginUsername.value))
+
   //validating the user's pin
-  if (Number(inputLoginPin.value) === currentAccount?.pin) {
+  if (Number(inputLoginPin.value) === currentAccount2?.pin) {
     //display UI container
     containerApp.style.opacity = "100%";
     inputLoginUsername.value = inputLoginPin.value = "";
