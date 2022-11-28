@@ -3,8 +3,23 @@
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // BANKIST APP
+const currency = {
+  USD: 1,
+  EUR: 1.1,
+  
+  changeEurToUSD() {
+    return this.eurToUSD = (this.USD * this.EUR).toFixed(5);
+  },
+  changeUSDToEur() {
+    return this.usdToEUR = (this.USD / this.EUR).toFixed(5);
+  }
+}
 
-const eurToUSD = 1.1;
+const change = (cc) => {
+  const currencyChange = cc * currency.changeEurToUSD()
+  return currencyChange;
+}
+
 const accountAdmin = {
   owner: "admin",
   movements: [0],
@@ -92,7 +107,7 @@ const displayMovements = function (acc) {
       <div class="movements__row">
           <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
           <div class="movements__date">3 days ago</div>
-          <div class="movements__value">${mov} USD</div>
+          <div class="movements__value">${change(mov).toFixed(2)} USD</div>
       </div>`;
 
     containerMovements.insertAdjacentHTML("afterbegin", html);
@@ -104,21 +119,21 @@ const calcDisplaySumaryMovements = (acc) => {
   const deposits =
     acc.movements
       .filter((mov) => mov > 0)
-      .reduce((deposit, mov) => deposit + mov) * eurToUSD;
-  labelSumIn.textContent = deposits.toFixed(2);
+      .reduce((deposit, mov) => deposit + mov);
+  labelSumIn.textContent = change(deposits).toFixed(2);
   const withdrawal =
     acc.movements
       .filter((mov) => mov < 0)
-      .reduce((deposit, mov) => deposit + mov) * eurToUSD;
-  labelSumOut.textContent = Math.abs(withdrawal).toFixed(2);
+      .reduce((deposit, mov) => deposit + mov);
+  labelSumOut.textContent = change(Math.abs(withdrawal)).toFixed(2);
   const interest = acc.movements
     .filter((deposit) => deposit > 0)
     .map((mov) => mov * (acc.interestRate / 100))
     .filter((int) => int >= 1)
     .reduce((accInt, mov) => accInt + mov);
   labelSumInterest.textContent = interest.toFixed(2);
-  const ballance = deposits + withdrawal;
-  acc.ballance = ballance;
+  const ballance = (deposits + withdrawal).toFixed(2);
+  acc.ballance = change(ballance).toFixed(2);
   labelBalance.textContent = `${acc.ballance} USD`;
 };
 
@@ -177,13 +192,31 @@ btnTransfer.addEventListener("click", function (e) {
   ) {
 
     //transfer transaction
-    currentAccount.movements.push(-ammount);
-    receiverAccount.movements.push(ammount);
+    currentAccount.movements.push(-ammount * currency.changeUSDToEur());
+    receiverAccount.movements.push(ammount * currency.changeUSDToEur());
 
     //updating UI after transfer
     updateUI(currentAccount);
   }
 });
+
+//request loan function - if the account has a deposit value that is at least 10% of the requested loan value
+btnLoan.addEventListener('click', function(e){
+  e.preventDefault();
+  const loanMinTax = 0.1; //10% - min percentage of deposit for the loan to be granted
+  const requestLoan = Number(inputLoanAmount.value) * currency.changeUSDToEur();
+  if (currentAccount.movements.some(mov => mov >= requestLoan * loanMinTax)) {
+    currentAccount.movements.push(requestLoan)
+    console.log(requestLoan)
+    console.log(currentAccount.movements)
+    updateUI(currentAccount)
+  } else {
+    alert(`The value requested of $${requestLoan * currency.changeEurToUSD()} USD was denied`);
+  }
+  inputLoanAmount.blur()
+  inputLoanAmount.value = "";
+
+})
 
 //close account function
 btnClose.addEventListener('click', function(e) {
@@ -197,27 +230,14 @@ btnClose.addEventListener('click', function(e) {
   containerApp.style.opacity = "0";
 })
 
-// btnTransfer.addEventListener('click', function(e) {
-//   e.preventDefault();
-//   const ammount = Number(inputTransferAmount.value);
-//   const receiverAccount = accounts.find(acc => acc.username === inputTransferTo.value);
+//sort function
 
-//   if (ammount > 0 && )
 
-//   console.log(`You transfered ${ammount} USD to ${receiverAccount.owner}`);
-// })
 
-// labelSumIn.textContent = showDeposits(account1.movements) * eurToUSD;
-// labelSumOut.textContent = showWithdrawals(account1.movements) * eurToUSD;
-
-// console.log(account1)
-// for (const acc of accounts){
-//   console.log(acc)
-//   labelBalance.innerHTML = acc.ballance;
-//   console.log(acc.reduceMovements);
-// }
-// labelBalance.textContent = `${account1.ballance * eurToUSD} USD`;
-
-// const ballance2 = account1.reduceMovements.bind(account2)
-// ballance2()
-// console.log(account2)
+// ----- FEATURES TO IMPLEMENT
+// --------- 1. Change currency using a button
+// ------------ 1.1 Create a property 'movements' for both currencies (main currency and secondary currency)
+// ------------ 1.2 Use a method to convert the movements of the main currency and generate the secondary currency movements
+// ---------- 2. Create functions as variables to use as callback functions
+// ------------ 2.1 Create a variable to the callback function 'deposit'
+// ------------ 2.1 Create a variable to the callback function 'withdrawal'
