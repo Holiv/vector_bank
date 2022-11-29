@@ -7,7 +7,7 @@ const inputFullName = [];
 const inputFirstName = document.querySelector('.form__input--firstName');
 const inputLastName = document.querySelector('.form__input--lastName');
 const inputDeposit = document.querySelector('.form__deposit');
-const inputPin = document.querySelector('.form__pin')
+const inputPin = document.querySelector('.form__pin');
 
 //containers
 const containerShowUser = document.querySelector('.show__user')
@@ -52,7 +52,7 @@ const addUserObject = acc => {
     localStorage.setItem(key, JSON.stringify(value))
     // const teste = JSON.parse(localStorage.getItem(key))
 }
-localStorage.clear();
+// localStorage.clear();
 
 //creating the user
 let currentUser;
@@ -78,7 +78,7 @@ const showUserInformation = (owner, id, pin, deposit) => {
         </tr>
         <tr>
             <td>User pin</td>
-            <td>${pin.slice(-1).padStart(pin.length, '*')}</td>
+            <td>${String(pin).slice(-1).padStart(4, '*')}</td>
         </tr>
         <tr>
             <td>Initial Deposit</td>
@@ -93,7 +93,7 @@ const showUserInformation = (owner, id, pin, deposit) => {
 submitButton.addEventListener('click', function(e) {
     e.preventDefault();
     //creating user
-    createUser([inputFirstName.value, inputLastName.value], inputDeposit.value, inputPin.value);
+    createUser([inputFirstName.value, inputLastName.value], Number(inputDeposit.value) * currency.changeUSDToEur(), Number(inputPin.value));
     //clear input
     inputFirstName.blur()
     inputLastName.blur()

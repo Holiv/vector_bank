@@ -82,7 +82,7 @@
           <input type="text" class="form__input form__input--to" />
           <input type="number" class="form__input form__input--amount" />
           <button class="form__btn form__btn--transfer">&rarr;</button>
-          <label class="form__label">Transfer to</label>
+          <label class="form__label label__deposit">Transfer to</label>
           <label class="form__label">Amount</label>
         </form>
       </div>
@@ -91,25 +91,35 @@
       <div class="operation operation--loan">
         <h2>Request loan</h2>
         <form class="form form--loan">
-          <input type="number" class="form__input form__input--loan-amount" />
+          <input type="number" class="form__input form__input--loan--amount" />
           <button class="form__btn form__btn--loan">&rarr;</button>
           <label class="form__label form__label--loan">Amount</label>
         </form>
       </div>
 
-      <!-- OPERATION: CLOSE -->
-      <div class="operation operation--close">
-        <h2>Close account</h2>
-        <form class="form form--close">
-          <input type="text" class="form__input form__input--user" />
+      <!-- OPERATION: WITHDRAWAL -->
+      <div class="operation operation--withdrawal">
+        <h2>Request Withdrawal</h2>
+        <form class="form form--withdrawal">
+          <input type="number" class="form__input form__input--withdrawal--amount" />
           <input
             type="password"
-            maxlength="6"
-            class="form__input form__input--pin"
+            maxlength="4"
+            class="form__input form__input--withdrawal--pin"
           />
-          <button class="form__btn form__btn--close">&rarr;</button>
-          <label class="form__label">Confirm user</label>
+          <button class="form__btn form__btn--withdrawal">&rarr;</button>
+          <label class="form__label">Amount</label>
           <label class="form__label">Confirm PIN</label>
+        </form>
+      </div>
+
+      <!-- DEPOSIT -->
+      <div class="operation operation--deposit">
+        <h2>Deposit</h2>
+        <form class="form form--deposit">
+          <input type="number" class="form__input form__input--deposit--amount" />
+          <button class="form__btn form__btn--deposit">&rarr;</button>
+          <label class="form__label form__label--deposit">Amount</label>
         </form>
       </div>
 
@@ -133,48 +143,47 @@
       <p class="logout-timer">
         You will be logged out in <span class="timer">05:00</span>
       </p>
-
-      <div class="signup">
-        <h2>Create User</h2>
-        <form class="form__signup">
-          <input type="text" class="form__input--firstName">
-          <input type="text" class="form__input--lastName">
-          <label class="form__label">First Name</label>
-          <label class="form__label">Last Name</label>
-          <input type="password" maxlength="4" class="form__pin">
-          <input type="number" class="form__deposit">
-          <label class="form__label">PIN</label>
-          <label class="form__label">Initial Deposit</label>
-          <button class="form__btn---submit--signup">&rarr;</button>
-        </form>
-        <div class="show__user">
-          <!-- insert adjacent html -->
-          <!-- <div class="show__user--container">
-            <h3>User Information</h3>
-            <table>
-              <tr>
-                <td>Name</td>
-                <td>nome completo</td> 
-              </tr>
-              <tr>
-                <td>User</td>
-                <td>user id</td> 
-              </tr>
-              <tr>
-                <td>User pin</td>
-                <td>pin</td>
-              </tr>
-              <tr>
-                <td>Initial Deposit</td>
-                <td>deposit value</td>
-              </tr>
-            </table>
-          </div> -->
-        </div>
-
-      </div>
-      
     </main>
+
+    <div class="signup signup__z-index">
+      <h2>Create User</h2>
+      <form class="form__signup">
+        <input type="text" class="form__input--firstName">
+        <input type="text" class="form__input--lastName">
+        <label class="form__label">First Name</label>
+        <label class="form__label">Last Name</label>
+        <input type="password" maxlength="4" class="form__pin">
+        <input type="number" class="form__deposit">
+        <label class="form__label">PIN</label>
+        <label class="form__label">Initial Deposit</label>
+        <button class="form__btn---submit--signup">&rarr;</button>
+      </form>
+      <div class="show__user">
+        <!-- insert adjacent html -->
+        <!-- <div class="show__user--container">
+          <h3>User Information</h3>
+          <table>
+            <tr>
+              <td>Name</td>
+              <td>nome completo</td> 
+            </tr>
+            <tr>
+              <td>User</td>
+              <td>user id</td> 
+            </tr>
+            <tr>
+              <td>User pin</td>
+              <td>pin</td>
+            </tr>
+            <tr>
+              <td>Initial Deposit</td>
+              <td>deposit value</td>
+            </tr>
+          </table>
+        </div> -->
+      </div>
+
+    </div>
 
     <!-- <footer>
       &copy; by Jonas Schmedtmann. Don't claim as your own :)

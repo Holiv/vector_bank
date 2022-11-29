@@ -77,11 +77,14 @@ const labelSumInterest = document.querySelector(".summary__value--interest");
 const labelTimer = document.querySelector(".timer");
 
 const containerApp = document.querySelector(".app");
+const containerSignUp = document.querySelector(".signup");
 const containerMovements = document.querySelector(".movements");
 
 const btnLogin = document.querySelector(".login__btn");
 const btnTransfer = document.querySelector(".form__btn--transfer");
 const btnLoan = document.querySelector(".form__btn--loan");
+const btnDeposit = document.querySelector(".form__btn--deposit")
+const btnWithdrawal = document.querySelector(".form__btn--withdrawal")
 const btnClose = document.querySelector(".form__btn--close");
 const btnSort = document.querySelector(".btn--sort");
 
@@ -89,7 +92,10 @@ const inputLoginUsername = document.querySelector(".login__input--user");
 const inputLoginPin = document.querySelector(".login__input--pin");
 const inputTransferTo = document.querySelector(".form__input--to");
 const inputTransferAmount = document.querySelector(".form__input--amount");
-const inputLoanAmount = document.querySelector(".form__input--loan-amount");
+const inputLoanAmount = document.querySelector(".form__input--loan--amount");
+const inputWithdrawal = document.querySelector(".form__input--withdrawal--amount");
+const inputDepositMov = document.querySelector(".form__input--deposit--amount")
+const inputWithdrawalPin = document.querySelector(".form__input--withdrawal--pin");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
@@ -123,16 +129,13 @@ const calcDisplaySumaryMovements = (acc) => {
       .filter((mov) => mov > 0)
       .reduce((deposit, mov) => deposit + mov);
   labelSumIn.textContent = change(deposits).toFixed(2);
-  const withdrawal =
-    acc.movements
-      .filter((mov) => mov < 0)
-      .reduce((deposit, mov) => deposit + mov);
+  const withdrawal = (!acc.movements.filter(mov => mov > 0)) ? 0 : acc.movements.filter((mov) => mov < 0).reduce((deposit, mov) => deposit + mov, 0);
   labelSumOut.textContent = change(Math.abs(withdrawal)).toFixed(2);
   const interest = acc.movements
     .filter((deposit) => deposit > 0)
     .map((mov) => mov * (acc.interestRate / 100))
     .filter((int) => int >= 1)
-    .reduce((accInt, mov) => accInt + mov);
+    .reduce((accInt, mov) => accInt + mov, 0);
   labelSumInterest.textContent = interest.toFixed(2);
   const ballance = (deposits + withdrawal).toFixed(2);
   acc.ballance = change(ballance).toFixed(2);
@@ -148,23 +151,26 @@ const updateUI = (currentAcc) => {
 };
 
 //function to activate the app (login) and keep track of the logged account
+let currentKey;
 let currentAccount;
 btnLogin.addEventListener("click", function (e) {
   e.preventDefault();
 
   //generating the user when loging in
-  currentAccount = accounts.find(
-    account => {
-      accounts[0].createUserName.call(account);
-      return account.username === inputLoginUsername.value;
-    }
-  );
-
-  currentAccount2 = JSON.parse(localStorage.getItem(inputLoginUsername.value))
+  // currentAccount = accounts.find(
+  //   account => {
+  //     accounts[0].createUserName.call(account);
+  //     return account.username === inputLoginUsername.value;
+  //   }
+  // );
+  currentKey = inputLoginUsername.value;
+  currentAccount = JSON.parse(localStorage.getItem(currentKey))
+  console.log(currentAccount)
 
   //validating the user's pin
-  if (Number(inputLoginPin.value) === currentAccount2?.pin) {
+  if (Number(inputLoginPin.value) === currentAccount?.pin) {
     //display UI container
+    containerSignUp.style.display = "none";
     containerApp.style.opacity = "100%";
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur();
@@ -179,10 +185,10 @@ btnLogin.addEventListener("click", function (e) {
 //transfer function
 btnTransfer.addEventListener("click", function (e) {
   e.preventDefault();
+
   const ammount = Number(inputTransferAmount.value);
-  const receiverAccount = accounts.find(
-    (acc) => acc.username === inputTransferTo.value
-  );
+  const receiverAccount = JSON.parse(localStorage.getItem(inputTransferTo.value))
+  console.log(Number(currentAccount.ballance))
   //cleaning the input
   inputTransferTo.value = inputTransferAmount.value = ""
   inputTransferAmount.blur();
@@ -191,48 +197,91 @@ btnTransfer.addEventListener("click", function (e) {
   if (
     ammount > 0 &&
     receiverAccount &&
-    currentAccount.ballance >= ammount &&
-    receiverAccount?.username !== currentAccount.username
+    Number(currentAccount.ballance) >= ammount &&
+    receiverAccount?.id !== currentAccount.id
   ) {
 
     //transfer transaction
     currentAccount.movements.push(-ammount * currency.changeUSDToEur());
+    localStorage.setItem(currentKey, JSON.stringify(currentAccount))
     receiverAccount.movements.push(ammount * currency.changeUSDToEur());
+    localStorage.setItem(receiverAccount.id, JSON.stringify(receiverAccount))
 
     //updating UI after transfer
     updateUI(currentAccount);
+  } else {
+    console.log('error')
   }
 });
 
 //request loan function - if the account has a deposit value that is at least 10% of the requested loan value
 btnLoan.addEventListener('click', function(e){
   e.preventDefault();
+
   const loanMinTax = 0.1; //10% - min percentage of deposit for the loan to be granted
   const requestLoan = Number(inputLoanAmount.value) * currency.changeUSDToEur();
   if (currentAccount.movements.some(mov => mov >= requestLoan * loanMinTax)) {
     currentAccount.movements.push(requestLoan)
-    console.log(requestLoan)
-    console.log(currentAccount.movements)
     updateUI(currentAccount)
+    localStorage.setItem(currentKey, JSON.stringify(currentAccount));
+
   } else {
     alert(`The value requested of $${requestLoan * currency.changeEurToUSD()} USD was denied`);
   }
   inputLoanAmount.blur()
   inputLoanAmount.value = "";
 
+});
+
+//function to add movement, wether it be deposit or withdrawal.
+const withdrawalOrDeposit = value => {
+  currentAccount.movements.push(value);
+  updateUI(currentAccount);
+  localStorage.setItem(currentKey, JSON.stringify(currentAccount))
+}
+
+//withdrawal function
+btnWithdrawal.addEventListener('click', function(e) {
+  e.preventDefault();
+  
+  const withdrawal = Number(-inputWithdrawal.value)
+  console.log(withdrawal)
+  console.log(Number(currentAccount.ballance))
+  console.log(currentAccount.pin)
+  console.log(Number(inputWithdrawalPin.value))
+  if(withdrawal <= Number(currentAccount.ballance) && currentAccount.pin === Number(inputWithdrawalPin.value)){
+    withdrawalOrDeposit(withdrawal);
+  } else{
+    console.log('withdrawal not allowerd')
+  }
+  inputWithdrawal.value = "";
+  inputWithdrawal.blur();
+});
+
+//deposit function
+btnDeposit.addEventListener('click', function(e){
+  e.preventDefault();
+
+  const deposit = Number(inputDepositMov.value)
+  withdrawalOrDeposit(deposit);
+
+  inputDepositMov.value = "";
+  inputDepositMov.blur();
 })
+
 
 //close account function
 btnClose.addEventListener('click', function(e) {
   e.preventDefault();
 
-  if (inputCloseUsername.value === currentAccount.username && Number(inputClosePin.value) === currentAccount.pin) {
-    const index = accounts.findIndex(acc => acc.username === currentAccount.username);
-    accounts.splice(index, 1);
-    console.log(accounts);
+  if (inputCloseUsername.value === currentAccount.id && Number(inputClosePin.value) === currentAccount.pin) {
+    // const index = accounts.findIndex(acc => acc.username === currentAccount.username);
+    // accounts.splice(index, 1);
+    // console.log(accounts);
+    localStorage.removeItem(currentAccount.id)
   }
   containerApp.style.opacity = "0";
-})
+});
 
 //sort function
 let sorted = false;
