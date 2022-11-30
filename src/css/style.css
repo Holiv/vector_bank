@@ -90,7 +90,7 @@ nav {
   margin: 4rem auto;
   display: grid;
   grid-template-columns: 4fr 3fr;
-  grid-template-rows: auto repeat(3, 15rem) auto;
+  grid-template-rows: auto repeat(4, 12rem) auto;
   gap: 2rem;
 
   /* NOTE This creates the fade in/out anumation */
@@ -124,7 +124,7 @@ nav {
 
 /* MOVEMENTS */
 .movements {
-  grid-row: 2 / span 3;
+  grid-row: 2 / span 4;
   background-color: #fff;
   border-radius: 1rem;
   overflow: scroll;
@@ -169,7 +169,7 @@ nav {
 
 /* SUMMARY */
 .summary {
-  grid-row: 5 / 6;
+  grid-row: 6 / 7;
   display: flex;
   align-items: baseline;
   padding: 0 0.3rem;
@@ -209,7 +209,7 @@ nav {
 /* OPERATIONS */
 .operation {
   border-radius: 1rem;
-  padding: 3rem 4rem;
+  padding: 2rem 4rem;
   color: #333;
 }
 
@@ -219,6 +219,14 @@ nav {
 
 .operation--loan {
   background-image: linear-gradient(to top left, #39b385, #9be15d);
+}
+
+.operation--deposit {
+  background-image: linear-gradient(to top left, #399fb3, #5dc7e1);
+}
+
+.operation--withdrawal {
+  background-image: linear-gradient(to top left, #3d39b3, #715de1);
 }
 
 .operation--close {
@@ -240,10 +248,13 @@ h2 {
 }
 
 /* Exceptions for interst */
-.form.form--loan {
+.form.form--loan, .form.form--deposit {
   grid-template-columns: 2.5fr 1fr 2.5fr;
 }
 .form__label--loan {
+  grid-row: 2;
+}
+.form__label--deposit {
   grid-row: 2;
 }
 /* End exceptions */
@@ -294,4 +305,79 @@ h2 {
 
 .timer {
   font-weight: 600;
+}
+
+.signup {
+  position: absolute;
+  top: 150px;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  display: block;
+  transition: all 1s;
+}
+
+/* .signup form{
+  max-width: 600px;
+  padding: 0;
+  margin: 0 auto;
+} */
+
+.signup h2 {
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.form__signup {
+  display: grid;
+  padding: 0 12rem 5rem 12rem;
+  grid-template-columns: repeat(2, 2fr) ;
+  grid-template-rows: repeat(5, 3rem);
+  gap: 5px;
+  max-width: calc(600px + 24rem);
+  margin: 0 auto;
+}
+
+.form__btn---submit--signup {
+  grid-column: 1 / span 2 ;
+}
+
+.show__user{
+  height: 250px;
+  background-color: #f3f3f3;
+  padding: 5rem 12rem 5rem 12rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  overflow: scroll;
+}
+
+.show__user--container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.show__user h3 {
+  font-size: 2rem;
+}
+
+.show__user table{
+  font-size: 1.5rem;
+  width: 50%;
+  
+}
+
+.show__user table td:first-child{
+  font-weight: 700;
+  /* text-align: end; */
+}
+
+.show__user table td:nth-child(2){
+  text-align: end;
 }
