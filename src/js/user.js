@@ -19,7 +19,7 @@ const usersObject = {};
 
 //Main class - creating the user
 class User {
-    interest = 1; //1%
+    interestRate = 1; //1%
 
     constructor(ownerName, mov, pin){
         this.createOwner(ownerName);
