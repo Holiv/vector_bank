@@ -179,9 +179,9 @@ const withdrawalOrDeposit = value => {
 btnWithdrawal.addEventListener('click', function(e) {
   e.preventDefault();
   
-  const withdrawal = Number(-inputWithdrawal.value)
+  const withdrawal = Number(inputWithdrawal.value)
   if(withdrawal <= Number(currentAccount.ballance) && currentAccount.pin === Number(inputWithdrawalPin.value)){
-    withdrawalOrDeposit(withdrawal);
+    withdrawalOrDeposit(-withdrawal);
   } else{
     alert('withdrawal not allowerd')
   }
