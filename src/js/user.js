@@ -12,7 +12,6 @@ const inputPin = document.querySelector('.form__pin');
 //containers
 const containerShowUser = document.querySelector('.show__user')
 const showUserInfo = document.querySelector('.show__user---container')
-console.log(containerShowUser)
 
 //array to store the users
 const users = [];
@@ -93,7 +92,7 @@ const showUserInformation = (owner, id, pin, deposit) => {
 submitButton.addEventListener('click', function(e) {
     e.preventDefault();
     //creating user
-    createUser([inputFirstName.value, inputLastName.value], Number(inputDeposit.value) * currency.changeUSDToEur(), Number(inputPin.value));
+    createUser([inputFirstName.value, inputLastName.value], Number(inputDeposit.value), Number(inputPin.value));
     //clear input
     inputFirstName.blur()
     inputLastName.blur()

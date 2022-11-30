@@ -2,70 +2,7 @@
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
-// BANKIST APP
-const currency = {
-  USD: 1,
-  EUR: 1.1,
-  
-  changeEurToUSD() {
-    return this.eurToUSD = (this.USD * this.EUR).toFixed(5);
-  },
-  changeUSDToEur() {
-    return this.usdToEUR = (this.USD / this.EUR).toFixed(5);
-  }
-}
-
-const change = (cc) => {
-  const currencyChange = cc * currency.changeEurToUSD()
-  return currencyChange;
-}
-
-const accountAdmin = {
-  owner: "admin",
-  movements: [0],
-  interestRate: 0, // %
-  pin: 9999,
-  createUserName() {
-    return (this.username = this.owner
-      .toLowerCase()
-      .split(" ")
-      .map((name) => name[0])
-      .join(""));
-  },
-}
-accountAdmin.createUserName();
-// Data
-const account1 = {
-  owner: "Jonas Schmedtmann",
-  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
-  interestRate: 1.2, // %
-  pin: 1111,
-};
-
-const account2 = {
-  owner: "Jessica Davis",
-  movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
-  interestRate: 1.5,
-  pin: 2222,
-};
-
-const account3 = {
-  owner: "Steven Thomas Williams",
-  movements: [200, -200, 340, -300, -20, 50, 400, -460],
-  interestRate: 0.7,
-  pin: 3333,
-};
-// account1.createUserName.call(account3)
-
-const account4 = {
-  owner: "Sarah Smith",
-  movements: [430, 1000, 700, 50, 90],
-  interestRate: 1,
-  pin: 4444,
-};
-// account1.createUserName.call(account4)
-
-const accounts = [accountAdmin, account1, account2, account3, account4];
+// VECTOR BANK
 
 // Elements
 const labelWelcome = document.querySelector(".welcome");
@@ -115,7 +52,7 @@ const displayMovements = function (movements, sort = false) {
       <div class="movements__row">
           <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
           <div class="movements__date">3 days ago</div>
-          <div class="movements__value">${change(mov).toFixed(2)} USD</div>
+          <div class="movements__value">${mov} USD</div>
       </div>`;
 
     containerMovements.insertAdjacentHTML("afterbegin", html);
@@ -128,17 +65,17 @@ const calcDisplaySumaryMovements = (acc) => {
     acc.movements
       .filter((mov) => mov > 0)
       .reduce((deposit, mov) => deposit + mov);
-  labelSumIn.textContent = change(deposits).toFixed(2);
+  labelSumIn.textContent = deposits;
   const withdrawal = (!acc.movements.filter(mov => mov > 0)) ? 0 : acc.movements.filter((mov) => mov < 0).reduce((deposit, mov) => deposit + mov, 0);
-  labelSumOut.textContent = change(Math.abs(withdrawal)).toFixed(2);
+  labelSumOut.textContent = Math.abs(withdrawal);
   const interest = acc.movements
     .filter((deposit) => deposit > 0)
     .map((mov) => mov * (acc.interestRate / 100))
     .filter((int) => int >= 1)
     .reduce((accInt, mov) => accInt + mov, 0);
   labelSumInterest.textContent = interest.toFixed(2);
-  const ballance = (deposits + withdrawal).toFixed(2);
-  acc.ballance = change(ballance).toFixed(2);
+  const ballance = (deposits + withdrawal);
+  acc.ballance = ballance;
   labelBalance.textContent = `${acc.ballance} USD`;
 };
 
@@ -156,13 +93,6 @@ let currentAccount;
 btnLogin.addEventListener("click", function (e) {
   e.preventDefault();
 
-  //generating the user when loging in
-  // currentAccount = accounts.find(
-  //   account => {
-  //     accounts[0].createUserName.call(account);
-  //     return account.username === inputLoginUsername.value;
-  //   }
-  // );
   currentKey = inputLoginUsername.value;
   currentAccount = JSON.parse(localStorage.getItem(currentKey))
   console.log(currentAccount)
@@ -178,7 +108,10 @@ btnLogin.addEventListener("click", function (e) {
 
     updateUI(currentAccount);
   } else {
-    console.log('invalid account')
+    alert('invalid user')
+    inputLoginUsername.value = inputLoginPin.value = "";
+    inputLoginUsername.blur();
+    inputLoginPin.blur();
   }
 });
 
@@ -202,9 +135,9 @@ btnTransfer.addEventListener("click", function (e) {
   ) {
 
     //transfer transaction
-    currentAccount.movements.push(-ammount * currency.changeUSDToEur());
+    currentAccount.movements.push(-ammount);
     localStorage.setItem(currentKey, JSON.stringify(currentAccount))
-    receiverAccount.movements.push(ammount * currency.changeUSDToEur());
+    receiverAccount.movements.push(ammount);
     localStorage.setItem(receiverAccount.id, JSON.stringify(receiverAccount))
 
     //updating UI after transfer
@@ -219,14 +152,14 @@ btnLoan.addEventListener('click', function(e){
   e.preventDefault();
 
   const loanMinTax = 0.1; //10% - min percentage of deposit for the loan to be granted
-  const requestLoan = Number(inputLoanAmount.value) * currency.changeUSDToEur();
+  const requestLoan = Number(inputLoanAmount.value);
   if (currentAccount.movements.some(mov => mov >= requestLoan * loanMinTax)) {
     currentAccount.movements.push(requestLoan)
     updateUI(currentAccount)
     localStorage.setItem(currentKey, JSON.stringify(currentAccount));
 
   } else {
-    alert(`The value requested of $${requestLoan * currency.changeEurToUSD()} USD was denied`);
+    alert(`The value requested of $${requestLoan} USD was denied`);
   }
   inputLoanAmount.blur()
   inputLoanAmount.value = "";
@@ -237,6 +170,8 @@ btnLoan.addEventListener('click', function(e){
 const withdrawalOrDeposit = value => {
   currentAccount.movements.push(value);
   updateUI(currentAccount);
+  inputWithdrawalPin.blur()
+  inputWithdrawalPin.value = "";
   localStorage.setItem(currentKey, JSON.stringify(currentAccount))
 }
 
@@ -245,14 +180,10 @@ btnWithdrawal.addEventListener('click', function(e) {
   e.preventDefault();
   
   const withdrawal = Number(-inputWithdrawal.value)
-  console.log(withdrawal)
-  console.log(Number(currentAccount.ballance))
-  console.log(currentAccount.pin)
-  console.log(Number(inputWithdrawalPin.value))
   if(withdrawal <= Number(currentAccount.ballance) && currentAccount.pin === Number(inputWithdrawalPin.value)){
     withdrawalOrDeposit(withdrawal);
   } else{
-    console.log('withdrawal not allowerd')
+    alert('withdrawal not allowerd')
   }
   inputWithdrawal.value = "";
   inputWithdrawal.blur();
@@ -293,7 +224,7 @@ btnSort.addEventListener('click', function(e) {
 
 
 // ----- FEATURES TO IMPLEMENT
-// --------- 1. Change currency using a button
+// --------- 1. currency using a button
 // ------------ 1.1 Create a property 'movements' for both currencies (main currency and secondary currency)
 // ------------ 1.2 Use a method to convert the movements of the main currency and generate the secondary currency movements
 // ---------- 2. Create functions as variables to use as callback functions
