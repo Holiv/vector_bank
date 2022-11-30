@@ -62,6 +62,12 @@ const createUser = (userFullName, depositValue, userPin) => {
     addUserObject(currentUser);
 }
 
+//users for test
+const alphaUser = new User(['Alpha','Alpha'], 500, 8888);
+const omegaUser = new User(['Omega','Omega'], 1000, 9999);
+addUserObject(alphaUser);
+addUserObject(omegaUser);
+
 const showUserInformation = (owner, id, pin, deposit) => {
     const userInfo = `
     <div class="show__user--container">

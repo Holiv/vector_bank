@@ -95,7 +95,6 @@ btnLogin.addEventListener("click", function (e) {
 
   currentKey = inputLoginUsername.value;
   currentAccount = JSON.parse(localStorage.getItem(currentKey))
-  console.log(currentAccount)
 
   //validating the user's pin
   if (Number(inputLoginPin.value) === currentAccount?.pin) {
