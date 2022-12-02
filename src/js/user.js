@@ -130,6 +130,11 @@ submitButton.addEventListener('click', function(e) {
 // --------- 4. Send the NAME (array), the DEPOSIT and the PIN as argument to CREATE the NEW USER
 //create a DEPOSIT function
 // --------- 5. Send the new user to the object to be stored in the localStorage
+// --------- 6. Create a function to implement Dates on the movements
+// ------------ 6.1 Show the current day for movements on the current day
+// ------------ 6.2 For movements a day earlier, show 'yesterday' (string)
+// ------------ 6.2 For days past longer than 1 day, show 'n days ago'
+
 
 
 // creating the logic to store the users in the localStorage
