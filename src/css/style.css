@@ -248,7 +248,8 @@ h2 {
 }
 
 /* Exceptions for interst */
-.form.form--loan, .form.form--deposit {
+.form.form--loan,
+.form.form--deposit {
   grid-template-columns: 2.5fr 1fr 2.5fr;
 }
 .form__label--loan {
@@ -334,7 +335,7 @@ h2 {
 .form__signup {
   display: grid;
   padding: 0 12rem 5rem 12rem;
-  grid-template-columns: repeat(2, 2fr) ;
+  grid-template-columns: repeat(2, 2fr);
   grid-template-rows: repeat(5, 3rem);
   gap: 5px;
   max-width: calc(600px + 24rem);
@@ -342,11 +343,11 @@ h2 {
 }
 
 .form__btn---submit--signup {
-  grid-column: 1 / span 2 ;
+  grid-column: 1 / span 2;
 }
 
-.show__user{
-  height: 250px;
+.show__user {
+  height: 100%;
   background-color: #f3f3f3;
   padding: 5rem 12rem 5rem 12rem;
   display: flex;
@@ -367,17 +368,16 @@ h2 {
   font-size: 2rem;
 }
 
-.show__user table{
+.show__user table {
   font-size: 1.5rem;
   width: 50%;
-  
 }
 
-.show__user table td:first-child{
+.show__user table td:first-child {
   font-weight: 700;
   /* text-align: end; */
 }
 
-.show__user table td:nth-child(2){
+.show__user table td:nth-child(2) {
   text-align: end;
 }
