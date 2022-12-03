@@ -36,11 +36,24 @@ const inputWithdrawalPin = document.querySelector(".form__input--withdrawal--pin
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// LECTURES
+//DATES
+let currentDate;
+const locale = navigator.language;
+const optionsDateLabel = {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  minute: 'numeric',
+  hour: 'numeric',
+}
+const optionsDateMov = {
+  day: 'numeric',
+  month: 'numeric',
+  year: 'numeric',
+}
 
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (movements, sort = false, dates) {
   containerMovements.innerHTML = "";
   
   const movem = sort ? movements.slice().sort((a, b) => a - b) : movements;
@@ -51,7 +64,7 @@ const displayMovements = function (movements, sort = false) {
     const html = `
       <div class="movements__row">
           <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
-          <div class="movements__date">3 days ago</div>
+          <div class="movements__date">${displayDates(i)}</div>
           <div class="movements__value">${mov} USD</div>
       </div>`;
 
@@ -77,7 +90,25 @@ const calcDisplaySumaryMovements = (acc) => {
   const ballance = (deposits + withdrawal);
   acc.ballance = ballance;
   labelBalance.textContent = `${acc.ballance} USD`;
+  const dateLabel = currentDate.toLocaleDateString(locale, optionsDateLabel);
+  labelDate.textContent = dateLabel;
 };
+
+const addDates = () => {
+  currentAccount.movementsDates.push(new Date());
+}
+
+const displayDates = i => {
+  const movDate = new Date(currentAccount.movementsDates[i]) 
+  const timestamp = (24 * 60 * 60 * 1000)
+  if(+currentDate - +movDate <= timestamp) {
+    return 'Today'
+  } else if (+currentDate - +movDate > timestamp && +currentDate - +movDate <= 2 * timestamp) {
+    return 'Yesterday'
+  } else {
+    return currentDate;
+  };
+}
 
 //updating interface
 const updateUI = (currentAcc) => {
@@ -105,6 +136,7 @@ btnLogin.addEventListener("click", function (e) {
     inputLoginPin.blur();
     labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(" ")[0]}`;
 
+    currentDate = new Date();
     updateUI(currentAccount);
   } else {
     alert('invalid user')
@@ -135,11 +167,14 @@ btnTransfer.addEventListener("click", function (e) {
 
     //transfer transaction
     currentAccount.movements.push(-ammount);
+    addDates(currentAccount);
     localStorage.setItem(currentKey, JSON.stringify(currentAccount))
     receiverAccount.movements.push(ammount);
+    addDates(receiverAccount);
     localStorage.setItem(receiverAccount.id, JSON.stringify(receiverAccount))
 
     //updating UI after transfer
+    addDates(currentAccount)
     updateUI(currentAccount);
   } else {
     console.log('error')
@@ -153,8 +188,9 @@ btnLoan.addEventListener('click', function(e){
   const loanMinTax = 0.1; //10% - min percentage of deposit for the loan to be granted
   const requestLoan = Number(inputLoanAmount.value);
   if (currentAccount.movements.some(mov => mov >= requestLoan * loanMinTax)) {
-    currentAccount.movements.push(requestLoan)
-    updateUI(currentAccount)
+    currentAccount.movements.push(requestLoan);
+    addDates(currentAccount);
+    updateUI(currentAccount);
     localStorage.setItem(currentKey, JSON.stringify(currentAccount));
 
   } else {
@@ -168,6 +204,7 @@ btnLoan.addEventListener('click', function(e){
 //function to add movement, wether it be deposit or withdrawal.
 const withdrawalOrDeposit = value => {
   currentAccount.movements.push(value);
+  addDates(currentAccount);
   updateUI(currentAccount);
   inputWithdrawalPin.blur()
   inputWithdrawalPin.value = "";

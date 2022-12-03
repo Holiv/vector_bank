@@ -25,8 +25,10 @@ class User {
         this.createOwner(ownerName);
         this.pin = pin;
         this.movements = [];
+        this.movementsDates = [];
         this.addMove(mov);
         this.createUser(ownerName)
+        this.addDate()
     }
     createOwner(ownerName) {
         this.owner = ownerName.join(" ");
@@ -41,6 +43,9 @@ class User {
     }
     addMove(mov) {
         this.movements.push(mov)
+    }
+    addDate() {
+        this.movementsDates.push(new Date())
     }
 }
 //adding user to the Users Object in the localStorage
@@ -109,16 +114,6 @@ submitButton.addEventListener('click', function(e) {
     showUserInformation(currentUser.owner, currentUser.id, currentUser.pin, currentUser.movements[0])
 
 })
-// users.push(new User(['Helton', 'Oliveira'], 100, 1111));
-
-
-//------ Add movement function
-    // let currentAccount;
-    // const addMov = transaction => {
-    //         currentAccount.addMove(transaction)
-    // }
-// console.log(users)
-
 
 // --------- 0. Create a Sign Up page;
 // --------- 1. Get the user name from the inputs (name, lastName) of the Sign Up page;
@@ -134,11 +129,3 @@ submitButton.addEventListener('click', function(e) {
 // ------------ 6.1 Show the current day for movements on the current day
 // ------------ 6.2 For movements a day earlier, show 'yesterday' (string)
 // ------------ 6.2 For days past longer than 1 day, show 'n days ago'
-
-
-
-// creating the logic to store the users in the localStorage
-
-// console.log(usersObject)
-
-// console.log(usersObject = {(currentAccount.id),  })
