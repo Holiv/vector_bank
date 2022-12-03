@@ -1,75 +1,103 @@
-//buttons
-const submitButton = document.querySelector('.form__btn---submit--signup');
+class LocalStorageWrapper {
+  static storage = this.#getStorage();
+  static users = this.storage.accounts; // Object of Users
+  constructor() {}
+  static #getStorage() {
+    const clientStorage = localStorage.getItem("vectorBank");
+    if (clientStorage == null) {
+      this.storage = {
+        accounts: [],
+      };
+      return this.#setLocalstorage();
+    } else {
+      return JSON.stringify(clientStorage);
+    }
+  }
+  static #setLocalstorage() {
+    localStorage.setItem("vectorBank", JSON.stringify(this.storage));
+    return this.storage;
+  }
+  static pushUser(userObj) {
+    this.storage.accounts.push(userObj);
+    this.#setLocalstorage();
+  }
+}
+class User {
+  interestRate = 1; //1%
+  id;
+  owner;
+  #users = LocalStorageWrapper.users; //users[]
+  constructor(ownerName, mov, pin) {
+    this.createOwner(ownerName);
+    this.pin = pin;
+    this.movements = [];
+    this.addMove(mov);
+    this.createUser(ownerName);
+  }
+  createOwner(ownerName) {
+    this.owner = ownerName.join(" ");
+  }
+  createUser(ownerN) {
+    const uId = ownerN
+      .map((char) => char[0])
+      .join("")
+      .toLowerCase();
+    if (this.#users.length === 0) {
+      this.id = uId;
+    } else {
+      const newUser = this.#users.find((userId) =>
+        userId.id !== uId ? (this.id = uId) : (this.id = `${uId}vb`)
+      );
+    }
+  }
+  addMove(mov) {
+    this.movements.push(mov);
+  }
+}
 
+const submitButton = document.querySelector(".form__btn---submit--signup");
 
 //inputs
 const inputFullName = [];
-const inputFirstName = document.querySelector('.form__input--firstName');
-const inputLastName = document.querySelector('.form__input--lastName');
-const inputDeposit = document.querySelector('.form__deposit');
-const inputPin = document.querySelector('.form__pin');
+const inputFirstName = document.querySelector(".form__input--firstName");
+const inputLastName = document.querySelector(".form__input--lastName");
+const inputDeposit = document.querySelector(".form__deposit");
+const inputPin = document.querySelector(".form__pin");
 
 //containers
-const containerShowUser = document.querySelector('.show__user')
-const showUserInfo = document.querySelector('.show__user---container')
+const containerShowUser = document.querySelector(".show__user");
+const showUserInfo = document.querySelector(".show__user---container");
 
 //array to store the users
 const users = [];
 const usersObject = {};
 
 //Main class - creating the user
-class User {
-    interestRate = 1; //1%
 
-    constructor(ownerName, mov, pin){
-        this.createOwner(ownerName);
-        this.pin = pin;
-        this.movements = [];
-        this.addMove(mov);
-        this.createUser(ownerName)
-    }
-    createOwner(ownerName) {
-        this.owner = ownerName.join(" ");
-    }
-    createUser (ownerN){
-        const uId = ownerN.map(char => char[0]).join("").toLowerCase();
-        if (users.length === 0) {
-            this.id = uId;
-        } else {
-            users.find(userId => userId.id !== uId ? this.id = uId : this.id = (`${uId}vb`));
-        }
-    }
-    addMove(mov) {
-        this.movements.push(mov)
-    }
-}
 //adding user to the Users Object in the localStorage
-const addUserObject = acc => {
-    usersObject[acc.id] = acc;
-    const key = acc.id;
-    const value = acc;
-    localStorage.setItem(key, JSON.stringify(value))
-    // const teste = JSON.parse(localStorage.getItem(key))
-}
+/* const addUserObject = (acc) => {
+  usersObject[acc.id] = acc;
+  const key = acc.id;
+  const value = acc;
+  localStorage.setItem(key, JSON.stringify(value));
+  // const teste = JSON.parse(localStorage.getItem(key))
+}; */
 // localStorage.clear();
 
 //creating the user
-let currentUser;
+/* let currentUser;
 const createUser = (userFullName, depositValue, userPin) => {
-    currentUser = new User(userFullName, depositValue, userPin)
-    users.push(currentUser);
+  currentUser = new User(userFullName, depositValue, userPin);
+  users.push(currentUser);
 
-    addUserObject(currentUser);
-}
-
-//users for test
-const alphaUser = new User(['Alpha','Alpha'], 500, 8888);
-const omegaUser = new User(['Omega','Omega'], 1000, 9999);
+  addUserObject(currentUser);
+}; */
+/* //users for test
 addUserObject(alphaUser);
-addUserObject(omegaUser);
+addUserObject(omegaUser); */
 
 const showUserInformation = (owner, id, pin, deposit) => {
-    const userInfo = `
+  const userInfo = `
     <div class="show__user--container">
         <h3>User Information</h3>
         <table>
@@ -83,7 +111,7 @@ const showUserInformation = (owner, id, pin, deposit) => {
         </tr>
         <tr>
             <td>User pin</td>
-            <td>${String(pin).slice(-1).padStart(4, '*')}</td>
+            <td>${String(pin).slice(-1).padStart(4, "*")}</td>
         </tr>
         <tr>
             <td>Initial Deposit</td>
@@ -91,34 +119,52 @@ const showUserInformation = (owner, id, pin, deposit) => {
         </tr>
         </table>
     <div>
-    `
-    containerShowUser.insertAdjacentHTML('afterbegin', userInfo)
-}
+    `;
+  containerShowUser.insertAdjacentHTML("afterbegin", userInfo);
+};
 //submit button
-submitButton.addEventListener('click', function(e) {
-    e.preventDefault();
-    //creating user
-    createUser([inputFirstName.value, inputLastName.value], Number(inputDeposit.value), Number(inputPin.value));
-    //clear input
-    inputFirstName.blur()
-    inputLastName.blur()
-    inputDeposit.blur()
-    inputPin.blur()
-    inputFirstName.value = inputLastName.value = inputDeposit.value = inputPin.value = "";
-    //showing information
-    showUserInformation(currentUser.owner, currentUser.id, currentUser.pin, currentUser.movements[0])
+submitButton.addEventListener("click", function (e) {
+  e.preventDefault();
 
-})
+  const newUser = new User(
+    [inputFirstName.value, inputLastName.value],
+    Number(inputDeposit.value),
+    Number(inputPin.value)
+  );
+
+  LocalStorageWrapper.pushUser(newUser);
+  //creating user
+  /*   createUser(
+    [inputFirstName.value, inputLastName.value],
+    Number(inputDeposit.value),
+    Number(inputPin.value)
+  ); */
+  //clear input
+  inputFirstName.blur();
+  inputLastName.blur();
+  inputDeposit.blur();
+  inputPin.blur();
+  inputFirstName.value =
+    inputLastName.value =
+    inputDeposit.value =
+    inputPin.value =
+      "";
+  //showing information
+  showUserInformation(
+    newUser.owner,
+    newUser.id,
+    newUser.pin,
+    newUser.movements[0]
+  );
+});
 // users.push(new User(['Helton', 'Oliveira'], 100, 1111));
 
-
 //------ Add movement function
-    // let currentAccount;
-    // const addMov = transaction => {
-    //         currentAccount.addMove(transaction)
-    // }
+// let currentAccount;
+// const addMov = transaction => {
+//         currentAccount.addMove(transaction)
+// }
 // console.log(users)
-
 
 // --------- 0. Create a Sign Up page;
 // --------- 1. Get the user name from the inputs (name, lastName) of the Sign Up page;
@@ -134,8 +180,6 @@ submitButton.addEventListener('click', function(e) {
 // ------------ 6.1 Show the current day for movements on the current day
 // ------------ 6.2 For movements a day earlier, show 'yesterday' (string)
 // ------------ 6.2 For days past longer than 1 day, show 'n days ago'
-
-
 
 // creating the logic to store the users in the localStorage
 
