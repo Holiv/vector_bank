@@ -10,7 +10,7 @@ class LocalStorageWrapper {
       };
       return this.#setLocalstorage();
     } else {
-      return JSON.stringify(clientStorage);
+      return JSON.parse(clientStorage);
     }
   }
   static #setLocalstorage() {
@@ -71,31 +71,14 @@ const showUserInfo = document.querySelector(".show__user---container");
 //array to store the users
 const users = [];
 const usersObject = {};
-
-//Main class - creating the user
-
-//adding user to the Users Object in the localStorage
-/* const addUserObject = (acc) => {
-  usersObject[acc.id] = acc;
-  const key = acc.id;
-  const value = acc;
-  localStorage.setItem(key, JSON.stringify(value));
-  // const teste = JSON.parse(localStorage.getItem(key))
-}; */
-// localStorage.clear();
-
-//creating the user
-/* let currentUser;
-const createUser = (userFullName, depositValue, userPin) => {
-  currentUser = new User(userFullName, depositValue, userPin);
-  users.push(currentUser);
-
-  addUserObject(currentUser);
-}; */
-/* //users for test
-addUserObject(alphaUser);
-addUserObject(omegaUser); */
-
+window.onload = () => {
+  if (LocalStorageWrapper.users) {
+    const { users } = LocalStorageWrapper;
+    users.forEach((user) => {
+      showUserInformation(user.owner, user.id, user.pin, user.movements[0]);
+    });
+  }
+};
 const showUserInformation = (owner, id, pin, deposit) => {
   const userInfo = `
     <div class="show__user--container">
@@ -122,6 +105,9 @@ const showUserInformation = (owner, id, pin, deposit) => {
     `;
   containerShowUser.insertAdjacentHTML("afterbegin", userInfo);
 };
+
+//onload Render Users in LocalStorage
+
 //submit button
 submitButton.addEventListener("click", function (e) {
   e.preventDefault();
