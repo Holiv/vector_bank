@@ -345,7 +345,9 @@ h2 {
 .form__btn---submit--signup {
   grid-column: 1 / span 2;
 }
-
+/* 
+By changing the height to 100%, the height of the div is not fixed.
+*/
 .show__user {
   height: 100%;
   background-color: #f3f3f3;

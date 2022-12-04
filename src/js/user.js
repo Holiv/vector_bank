@@ -1,7 +1,18 @@
+/*
+ A wrapper class that will be used to interact with the browser's localstorage. 
+ The class will try to retrieve data from the browser's storage. In the event there is nothing,
+ it will set the storage with a default object looking like this:
+ {
+    accounts:[]
+ }
+
+ The key for this object will be vector_bank. The wrapper wil also set the local storage when new users are created.
+
+
+*/
 class LocalStorageWrapper {
   static storage = this.#getStorage();
   static users = this.storage.accounts; // Object of Users
-  constructor() {}
   static #getStorage() {
     const clientStorage = localStorage.getItem("vectorBank");
     if (clientStorage == null) {
@@ -22,22 +33,30 @@ class LocalStorageWrapper {
     this.#setLocalstorage();
   }
 }
+
+/*
+A wrapper class for creating new users/accounts. The class has a private property called "users". This property will contain the array of users that are stored in the client's localstorage. 
+
+Upon creating a new users, the class will assign it a new id through the `createOwner()` function.
+Each instance of the user class will have an `addMove` function. This function is for future functionality to 
+add additional transaction history. 
+*/
 class User {
   interestRate = 1; //1%
   id;
   owner;
   #users = LocalStorageWrapper.users; //users[]
   constructor(ownerName, mov, pin) {
-    this.createOwner(ownerName);
+    this.#createOwner(ownerName);
     this.pin = pin;
     this.movements = [];
     this.addMove(mov);
-    this.createUser(ownerName);
+    this.#createUser(ownerName);
   }
-  createOwner(ownerName) {
+  #createOwner(ownerName) {
     this.owner = ownerName.join(" ");
   }
-  createUser(ownerN) {
+  #createUser(ownerN) {
     const uId = ownerN
       .map((char) => char[0])
       .join("")
@@ -67,10 +86,10 @@ const inputPin = document.querySelector(".form__pin");
 //containers
 const containerShowUser = document.querySelector(".show__user");
 const showUserInfo = document.querySelector(".show__user---container");
+/*
+As soon as the window is done loading, this event listener will retrieve any users from the browser's localstorage, and then render them onto the page. 
 
-//array to store the users
-const users = [];
-const usersObject = {};
+*/
 window.onload = () => {
   if (LocalStorageWrapper.users) {
     const { users } = LocalStorageWrapper;
@@ -106,8 +125,6 @@ const showUserInformation = (owner, id, pin, deposit) => {
   containerShowUser.insertAdjacentHTML("afterbegin", userInfo);
 };
 
-//onload Render Users in LocalStorage
-
 //submit button
 submitButton.addEventListener("click", function (e) {
   e.preventDefault();
@@ -119,12 +136,7 @@ submitButton.addEventListener("click", function (e) {
   );
 
   LocalStorageWrapper.pushUser(newUser);
-  //creating user
-  /*   createUser(
-    [inputFirstName.value, inputLastName.value],
-    Number(inputDeposit.value),
-    Number(inputPin.value)
-  ); */
+
   //clear input
   inputFirstName.blur();
   inputLastName.blur();
