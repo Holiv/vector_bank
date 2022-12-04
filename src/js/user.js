@@ -70,6 +70,9 @@ const createUser = (userFullName, depositValue, userPin) => {
 //users for test
 const alphaUser = new User(['Alpha','Alpha'], 500, 8888);
 const omegaUser = new User(['Omega','Omega'], 1000, 9999);
+alphaUser.movements.push(100, -200, 500);
+alphaUser.movementsDates.push(new Date('December 2, 2022'), new Date('November 18, 2022'), new Date('September 3, 2022'),);
+console.log(alphaUser)
 addUserObject(alphaUser);
 addUserObject(omegaUser);
 
