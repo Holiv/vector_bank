@@ -88,8 +88,7 @@ const inputPin = document.querySelector(".form__pin");
 const containerShowUser = document.querySelector(".show__user");
 const showUserInfo = document.querySelector(".show__user---container");
 /*
-As soon as the window is done loading, this event listener will retrieve any users from the browser's localstorage, and then render them onto the page. 
-
+As soon as the window is done loading, this event listener will retrieve any users from the browser's localstorage, and then render them onto the page.
 */
 window.onload = () => {
   if (LocalStorageWrapper.users) {

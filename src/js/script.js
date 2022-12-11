@@ -53,9 +53,9 @@ const optionsDateMov = {
   year: 'numeric',
 }
 
-const displayMovements = function (movements, sort = false, dates) {
+const displayMovements = function (movements, sort = false) {
   containerMovements.innerHTML = "";
-  
+ 
   const movem = sort ? movements.slice().sort((a, b) => a - b) : movements;
 
   movem.forEach(function (mov, i) {
@@ -94,8 +94,8 @@ const calcDisplaySumaryMovements = (acc) => {
   labelDate.textContent = dateLabel;
 };
 
-const addDates = () => {
-  currentAccount.movementsDates.push(new Date());
+const addDates = (acc) => {
+  acc.movementsDates.push(new Date());
 }
 
 const displayDates = i => {
@@ -106,7 +106,7 @@ const displayDates = i => {
   } else if (+currentDate - +movDate > timestamp && +currentDate - +movDate <= 2 * timestamp) {
     return 'Yesterday'
   } else {
-    return currentDate;
+    return `${new Date(currentAccount.movementsDates[i]).toLocaleDateString(locale, optionsDateMov)}`;
   };
 }
 
@@ -256,7 +256,6 @@ btnSort.addEventListener('click', function(e) {
   displayMovements(currentAccount.movements, !sorted);
   sorted = !sorted;
 })
-
 
 // ----- FEATURES TO IMPLEMENT
 // --------- 1. currency using a button
